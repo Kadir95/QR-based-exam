@@ -5,6 +5,7 @@
  */
 package qr.based.exam;
 
+import java.io.IOException;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -18,16 +19,14 @@ import javafx.stage.Stage;
 public class QRBasedExam extends Application {
     
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage primaryStage) throws IOException{
         Parent root = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));
         
         Scene scene = new Scene(root);
         
-        stage.setScene(scene);
-        stage.show();
+        primaryStage.setScene(scene);
+        primaryStage.show();
     }
-    
-    
 
     /**
      * @param args the command line arguments
