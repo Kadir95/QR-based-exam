@@ -21,6 +21,20 @@ import java.awt.image.BufferedImage;
  * @author mzp7
  */
 public class DocOps {
+    public static BufferedImage[] convert_to_bufferedimage(PDDocument document, float dpi){
+        BufferedImage[] images = new BufferedImage[document.getNumberOfPages()];
+        PDFRenderer docrenderer = new PDFRenderer(document);
+        
+        for(int i = 0; i < document.getNumberOfPages(); i++){
+            try{
+                images[i] = docrenderer.renderImageWithDPI(i, dpi);     
+            } catch(IOException e){
+                System.err.println("Error at convert_to_bufferedimage | " + e);
+            }
+        }
+        
+        return images;
+    }
     public static Image[] convert_to_image(PDDocument document, float dpi){
         Image[] images = new Image[document.getNumberOfPages()];
         PDFRenderer docrenderer = new PDFRenderer(document);
@@ -44,10 +58,5 @@ public class DocOps {
             System.err.println("Error at readQR | " + e);
             return null;
         }
-    }
-    
-    public static Exam readExam(PDDocument document){
-        
-        return null;
     }
 }

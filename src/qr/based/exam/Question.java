@@ -6,16 +6,16 @@
 package qr.based.exam;
 
 import java.awt.image.BufferedImage;
-import javafx.embed.swing.SwingFXUtils;
-import javafx.scene.image.Image;
+import java.awt.image.RasterFormatException;
+import java.io.Serializable;
 import javafx.util.Pair;
 
 /**
  *
  * @author mzp7
  */
-public class Question {
-    private Image   image;
+public class Question implements Serializable{
+    private BufferedImage   image;
     private Pair<Integer, Integer> location;
     private float   maxpoint;
     private int question_number;
@@ -26,8 +26,11 @@ public class Question {
         this.page = page;
     }
     
-    public void setTmage(Image image){
-        this.image = image;
+    public void setImage(BufferedImage image){
+        this.cutselfy(image);
+    }
+    public BufferedImage getImage(){
+        return this.image;
     }
     public void setLocation(Pair<Integer, Integer> location){
         this.location = location;
@@ -50,12 +53,16 @@ public class Question {
     }
     
     public void cutselfy(BufferedImage image){
-        if (location != null){
+        if (location == null){
             return;
         }
-        int firstloc = image.getHeight() / 100 * this.location.getKey();
-        int lastloc  = firstloc + image.getHeight() / 100 * this.location.getValue();
-        
-        this.image = SwingFXUtils.toFXImage(image.getSubimage(0, firstloc, image.getWidth(), lastloc), null);
+        int firstloc = (int) (image.getHeight() * ((double) this.location.getKey() / 100));
+        int lastloc  = (int) (image.getHeight() * ((double) this.location.getValue() / 100));
+        try {
+            this.image = image.getSubimage(1, firstloc, image.getWidth() - 2, lastloc);    
+        } catch (RasterFormatException e){
+            System.err.println("Error at cutselfy | " + e);
+            this.image = null;
+        }
     }
 }

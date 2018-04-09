@@ -6,6 +6,7 @@
 package qr.based.exam;
 
 import java.awt.Button;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -15,10 +16,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javax.imageio.ImageIO;
 import org.apache.pdfbox.pdmodel.PDDocument;
 
 /**
@@ -35,8 +34,7 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private Label       qrlabel;
     
-    private Image[] slaytshow = null;
-    private int current_slayt_no = 0;
+    DataStorage         datastorage;
     
     @FXML
     private void openmenubuttonaction(ActionEvent event) throws IOException, InterruptedException {
@@ -44,34 +42,33 @@ public class FXMLDocumentController implements Initializable {
         File file = FileOps.filechooser("Choose a PDF file", "PDF File", new String[]{"*.pdf"});
         
         PDDocument document = PDDocument.load(file);
-        slaytshow = DocOps.convert_to_image(document, 600);
+        datastorage.addExam(document);
     }
     
     @FXML
     private void save_current_image_button_action(ActionEvent event){
-        try{
-            ImageIO.write(SwingFXUtils.fromFXImage(slaytshow[current_slayt_no], null), "BMP", new File("output"));
-        }catch(IOException e){
-            System.err.println("Error at save_current_image_button_action | " + e);
-        }
+        
     }
     
     @FXML
     private void nextbuttonaction(ActionEvent event){
-        if(slaytshow != null){
-            imagelabel.setImage(slaytshow[current_slayt_no]);
-            qrlabel.setText(DocOps.readQR(SwingFXUtils.fromFXImage(slaytshow[current_slayt_no], null)));
-            current_slayt_no++;
-            if(slaytshow.length == current_slayt_no){
-                current_slayt_no = 0;
-            }
+        if (datastorage.exams.isEmpty()){
+            return;
         }
-    }
+        
+        Exam[] tempexam = datastorage.exams.values().toArray(new Exam[datastorage.exams.values().size()]);
+        Sheet[] tempsheet = tempexam[0].getSheets().values().toArray(new Sheet[tempexam[0].getSheets().values().size()]);
+        
+        BufferedImage image = tempsheet[0].getPages().get(0).getQuestion(0).getImage();
+        
+        imagelabel.setImage(SwingFXUtils.toFXImage(image, null));
+    }   
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         imagelabel.fitWidthProperty().bind(mainpane.widthProperty());
         imagelabel.fitHeightProperty().bind(mainpane.heightProperty());
+        datastorage = new DataStorage();
     }
 
 }
