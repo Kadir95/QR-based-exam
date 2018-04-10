@@ -37,6 +37,9 @@ public class Page implements Serializable{
         this.setPage(image);
     }
     
+    public int getPageNumber(){
+        return this.pagenumber;
+    }
     public void setSheet(Sheet sheet){
         this.sheet = sheet;
     }
@@ -50,7 +53,9 @@ public class Page implements Serializable{
     public QRcode getQRcode(){
         return this.qrcode;
     }
-    
+    public ArrayList<Question> getQuesitons(){
+        return this.questions;
+    }
     public Question getQuestion(int index){
         if (index < 0 || index >= this.questions.size()){
             return null;
@@ -72,6 +77,7 @@ public class Page implements Serializable{
     public void setPage(QRcode qrcode, BufferedImage image){
         this.qrcode = qrcode;
         this.image = image;
+        this.pagenumber = qrcode.pageNumber;
         
         questions = new ArrayList<>(this.qrcode.questions.length);
         

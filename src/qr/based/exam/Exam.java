@@ -10,7 +10,6 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Set;
-import javafx.util.Pair;
 import org.apache.pdfbox.pdmodel.PDDocument;
 
 /**
@@ -22,17 +21,17 @@ public class Exam implements Serializable{
     private Date date;
     private LinkedHashMap<Student, Sheet> sheets;
     private String type;
-    private PDDocument examdocument;
+    //private PDDocument examdocument;
     
     public Exam(String coursecode, Date date, String type){
         this.coursecode = coursecode;
         this.date       = date;
         this.type       = type;
         sheets = new LinkedHashMap<>(128);
-        this.examdocument = null;
+        //this.examdocument = null;
     }
     public Exam(PDDocument document){
-        this.examdocument = document;
+        //this.examdocument = document;
         
         int pagenumber = document.getNumberOfPages();
         BufferedImage[] images = DocOps.convert_to_bufferedimage(document, 600);

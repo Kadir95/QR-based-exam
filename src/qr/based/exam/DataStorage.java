@@ -20,7 +20,7 @@ public class DataStorage implements Serializable{
     public LinkedHashMap<Pair<String, Date>, Exam>   exams;
     
     // Students LinkedHashMap<Long /* Student ID */, Student>
-    public LinkedHashMap<Long, Student>        students;
+    public LinkedHashMap<Long, Student>             students;
     
     /**
      * 

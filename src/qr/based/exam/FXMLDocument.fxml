@@ -1,21 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.RadioMenuItem?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.SplitMenuButton?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
 
 <AnchorPane id="AnchorPane" fx:id="mainpane" minHeight="100.0" minWidth="200.0" prefHeight="489.0" prefWidth="711.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="qr.based.exam.FXMLDocumentController">
    <children>
@@ -24,6 +32,7 @@
           <Menu mnemonicParsing="false" text="File">
             <items>
               <MenuItem id="openmenubutton" fx:id="openmenubutton" mnemonicParsing="false" onAction="#openmenubuttonaction" text="Open" />
+                  <MenuItem fx:id="savemenubutton" mnemonicParsing="false" onAction="#onSaveButton" text="Save" />
                   <MenuItem id="openmenubutton" fx:id="Exportbutton" mnemonicParsing="false" text="Export" />
             </items>
           </Menu>
@@ -31,46 +40,43 @@
       </MenuBar>
       <TabPane layoutY="29.0" prefHeight="461.0" prefWidth="711.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="29.0">
         <tabs>
-          <Tab text="Untitled Tab 1">
+          <Tab closable="false" text="Grade">
                <content>
                   <SplitPane dividerPositions="0.3009845288326301" prefHeight="160.0" prefWidth="200.0">
                      <items>
-                        <ScrollPane fitToWidth="true" prefHeight="200.0" prefWidth="200.0">
-                          <content>
-                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="427.0" prefWidth="248.0">
-                                 <children>
-                                    <Label layoutX="14.0" layoutY="14.0" prefHeight="22.0" prefWidth="66.0" text="Exam" AnchorPane.leftAnchor="14.0" />
-                                    <SplitMenuButton layoutX="14.0" layoutY="36.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="182.0" text="SplitMenuButton" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0">
-                                      <items>
-                                        <MenuItem mnemonicParsing="false" text="Action 1" />
-                                        <MenuItem mnemonicParsing="false" text="Action 2" />
-                                      </items>
-                                    </SplitMenuButton>
-                                    <MenuButton layoutX="14.0" layoutY="79.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="184.0" text="MenuButton" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="12.0">
-                                       <items>
-                                          <RadioMenuItem fx:id="questionbyquestion" mnemonicParsing="false" selected="true" text="Question by question" />
-                                          <RadioMenuItem fx:id="studentbystudent" mnemonicParsing="false" text="Student by student" />
-                                       </items>
-                                    </MenuButton>
-                                 </children>
-                              </AnchorPane>
-                          </content>
-                        </ScrollPane>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="427.0" prefWidth="248.0">
+                           <children>
+                              <Label layoutX="14.0" layoutY="14.0" prefHeight="22.0" prefWidth="66.0" text="Exam" AnchorPane.leftAnchor="14.0" />
+                              <MenuButton fx:id="methodmenu" layoutX="13.0" layoutY="94.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="184.0" text="Question by Quesiton" AnchorPane.leftAnchor="13.0" AnchorPane.rightAnchor="13.0">
+                                 <items>
+                                    <RadioMenuItem fx:id="questionbyquestion" mnemonicParsing="false" onAction="#questionbyquestionaction" selected="true" text="Question by question">
+                                       <toggleGroup>
+                                          <ToggleGroup fx:id="methodselect" />
+                                       </toggleGroup></RadioMenuItem>
+                                    <RadioMenuItem fx:id="studentbystudent" mnemonicParsing="false" onAction="#studentbystudentaction" text="Student by student" toggleGroup="$methodselect" />
+                                 </items>
+                              </MenuButton>
+                              <Label layoutX="14.0" layoutY="72.0" prefHeight="22.0" prefWidth="66.0" text="Method" />
+                              <TableView fx:id="table" layoutY="136.0" prefHeight="291.0" prefWidth="210.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="136.0" />
+                              <MenuButton fx:id="exammenu" layoutX="13.0" layoutY="36.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="185.0" text="MenuButton" AnchorPane.leftAnchor="13.0" AnchorPane.rightAnchor="13.0" />
+                           </children>
+                        </AnchorPane>
                         <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0">
                           <items>
-                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                            <AnchorPane fx:id="imagelabelpane" minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                                  <children>
                                     <ImageView fx:id="imagelabel" fitHeight="212.0" fitWidth="494.0" layoutX="-1.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                  </children>
                               </AnchorPane>
                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                                  <children>
-                                    <TextArea prefHeight="171.0" prefWidth="493.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                    <TextArea fx:id="reviewfield" prefHeight="171.0" prefWidth="493.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                     <ButtonBar layoutY="164.0" prefHeight="40.0" prefWidth="493.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                                       <buttons>
-                                          <Button mnemonicParsing="false" text="Save" />
-                                        <Button mnemonicParsing="false" text="Next" />
-                                          <Button mnemonicParsing="false" text="Back" />
+                                          <TextField fx:id="pointenterence" prefHeight="28.0" prefWidth="803.0" promptText="Enter Point" />
+                                          <Button maxWidth="50.0" mnemonicParsing="false" text="Save" />
+                                          <Button maxWidth="50.0" mnemonicParsing="false" onAction="#backButtonAction" text="Back" />
+                                        <Button maxWidth="50.0" minWidth="49.0" mnemonicParsing="false" onAction="#nextButtonAction" prefHeight="26.0" text="Next" />
                                       </buttons>
                                     </ButtonBar>
                                  </children>
@@ -81,11 +87,69 @@
                   </SplitPane>
                </content>
           </Tab>
-          <Tab text="Untitled Tab 2">
+          <Tab closable="false" text="Statistic">
             <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <Accordion prefHeight="427.0" prefWidth="711.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                          <panes>
+                            <TitledPane animated="false" text="untitled 1">
+                              <content>
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                              </content>
+                            </TitledPane>
+                            <TitledPane animated="false" text="untitled 2">
+                              <content>
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                              </content>
+                            </TitledPane>
+                            <TitledPane animated="false" text="untitled 3">
+                              <content>
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                       <children>
+                                          <BarChart layoutX="-1.0" prefHeight="349.0" prefWidth="711.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                            <xAxis>
+                                              <CategoryAxis side="BOTTOM" />
+                                            </xAxis>
+                                            <yAxis>
+                                              <NumberAxis side="LEFT" />
+                                            </yAxis>
+                                          </BarChart>
+                                       </children>
+                                    </AnchorPane>
+                              </content>
+                            </TitledPane>
+                          </panes>
+                        </Accordion>
+                     </children></AnchorPane>
             </content>
           </Tab>
+            <Tab fx:id="errortab" closable="false" text="Errors">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <SplitPane dividerPositions="0.5655853314527504" prefHeight="428.0" prefWidth="711.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                          <items>
+                            <AnchorPane minHeight="0.0" minWidth="100.0" prefHeight="160.0" prefWidth="100.0">
+                                 <children>
+                                    <ComboBox layoutX="14.0" layoutY="86.0" prefHeight="26.0" prefWidth="322.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" />
+                                    <Label layoutX="14.0" layoutY="14.0" text="Student" />
+                                    <TextField layoutX="14.0" layoutY="30.0" prefHeight="28.0" prefWidth="322.0" promptText="Student Name" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" />
+                                    <TextField layoutX="14.0" layoutY="58.0" prefHeight="28.0" prefWidth="322.0" promptText="Student Number" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" />
+                                    <VBox fx:id="questionadditionbox" alignment="TOP_CENTER" layoutX="14.0" layoutY="122.0" prefHeight="253.0" prefWidth="322.0" style="-fx-background-color: #EBE9E9;" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="122.0" />
+                                    <Button layoutX="204.0" layoutY="385.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="132.0" text="Add Question" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="14.0" />
+                                 </children>
+                              </AnchorPane>
+                            <AnchorPane fx:id="errorimageviewpane" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                                 <children>
+                                    <ImageView fx:id="errorimageview" fitHeight="425.0" fitWidth="494.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                 </children>
+                              </AnchorPane>
+                          </items>
+                        </SplitPane>
+                     </children></AnchorPane>
+              </content>
+            </Tab>
         </tabs>
       </TabPane>
    </children>

@@ -7,7 +7,6 @@ package qr.based.exam;
 
 import java.io.IOException;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -24,14 +23,7 @@ public class QRBasedExam extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));
         
         Scene scene = new Scene(root);
-        
         primaryStage.setScene(scene);
-        primaryStage.setOnCloseRequest(e -> {
-            
-            // clean up codes.
-            System.out.println("bye!");
-            Platform.exit();
-        });
         primaryStage.show();
     }
 

@@ -20,12 +20,16 @@ public class Question implements Serializable{
     private float   maxpoint;
     private int question_number;
     private float point;
+    private String review;
     private Page page;
     
     public Question(Page page){
         this.page = page;
     }
     
+    public int getQuestionNumber(){
+        return this.question_number;
+    }
     public void setImage(BufferedImage image){
         this.cutselfy(image);
     }
@@ -41,10 +45,18 @@ public class Question implements Serializable{
     public void setQuestionNumber(int questionNumber){
         this.question_number = questionNumber;
     }
-    public void givePoint(float point){
+    public void setPoint(float point){
         this.point = point;
     }
-    
+    public float getPoint(){
+        return this.point;
+    }
+    public String getReview(){
+        return this.review;
+    }
+    public void setReview(String review){
+        this.review = review;
+    }
     public void changePage(Page page){
         this.page = page;
     }
