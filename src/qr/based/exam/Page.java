@@ -54,6 +54,9 @@ public class Page implements Serializable{
         return this.qrcode;
     }
     public ArrayList<Question> getQuesitons(){
+        if(questions == null){
+            return new ArrayList<>();
+        }
         return this.questions;
     }
     public Question getQuestion(int index){

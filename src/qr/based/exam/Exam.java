@@ -69,7 +69,13 @@ public class Exam implements Serializable{
         this.sheets = new LinkedHashMap<>(128);
         for(int i = 0; i < pages.length; i++){
             QRcode pageqr = pages[i].getQRcode();
-            Student tempstudent = new Student(pageqr.studentName, pageqr.studentNumber);
+            Student tempstudent = null;
+            if(pageqr != null){
+                tempstudent = new Student(pageqr.studentName, pageqr.studentNumber);
+            } else {
+                tempstudent = new Student("NoN", -1);
+            }
+            
             
             if (!sheets.containsKey(tempstudent)){
                 sheets.put(tempstudent, new Sheet(this));

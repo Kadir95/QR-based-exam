@@ -36,6 +36,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TreeView;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
@@ -74,9 +75,9 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     public TextArea    reviewfield;
     @FXML
-    public ComboBox<Student>    errorstudentcombobox;
+    public ComboBox<String>    errorstudentcombobox;
     @FXML
-    public VBox         questionadditionbox;
+    public TreeView<Page>         questionadditiontree;
     @FXML
     public BarChart<String, Float> poinforeachstudent;
     @FXML
@@ -177,8 +178,8 @@ public class FXMLDocumentController implements Initializable {
                     currentexam = datastorage.exams.get(pair);
                     if(!currentexam.getErrors().isEmpty()){
                         errortab.setDisable(false);
-                        statistictab.setDisable(true);
-                        gradetab.setDisable(true);
+                        //statistictab.setDisable(true);
+                        //gradetab.setDisable(true);
                         errorhandle();
                     }
                     exammenu.setText(currentexam.getCourseCode());
@@ -196,6 +197,9 @@ public class FXMLDocumentController implements Initializable {
             Map.Entry<Student, Sheet> entry = iterator.next();
             ArrayList<Question> quesitons = new ArrayList<>();
             for(int i = 0; i < entry.getValue().getPages().size(); i++){
+                if(entry.getValue().getPages().get(i).getQuesitons().isEmpty()){
+                    continue;
+                }
                 for(int j = 0; j < entry.getValue().getPages().get(i).getQuesitons().size(); j++){
                     quesitons.add(entry.getValue().getPages().get(i).getQuestion(j));
                 }
@@ -211,22 +215,15 @@ public class FXMLDocumentController implements Initializable {
     public void errorhandle(){
         Iterator<Student> iter = currentexam.getStudents().iterator();
         while(iter.hasNext()){
-            errorstudentcombobox.getItems().add(iter.next());
+            errorstudentcombobox.getItems().add(iter.next().getPair().getKey() + "+" + iter.next().getPair().getValue());
         }
         
         
     }
     @FXML
     public void addquestionbutton(ActionEvent event){
-        ButtonBar newbuttonbar = new ButtonBar();
-        Button addimagebutton = new Button("Add Image");
-        Button save = new Button("Save");
-        TextField pagenumber = new TextField();
-        pagenumber.setPromptText("Page No");
-        TextField questionnumber = new TextField();
-        questionnumber.setPromptText("Quesiton No");
-        newbuttonbar.getButtons().addAll(pagenumber, questionnumber, addimagebutton, save);
-        questionadditionbox.getChildren().add(newbuttonbar);
+        
+       
     }
     
     @FXML

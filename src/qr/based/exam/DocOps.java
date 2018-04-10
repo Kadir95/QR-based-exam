@@ -111,14 +111,24 @@ public class DocOps {
             student.createCell(1).setCellValue(std.getPair().getValue());
             ArrayList<Question> stdquestions = new ArrayList<>();
             ArrayList<Page> stdpages = exam.getSheets().get(std).getPages();
+            boolean flag = false;
             for(Page page : stdpages){
+                if(page.getQuesitons().isEmpty()){
+                    flag = true;
+                }
                 for(Question q : page.getQuesitons()){
                     stdquestions.add(q);
                 }
             }
             
-            for(int i = 0; i < quesitons.size(); i++){
-                student.createCell(2 + i).setCellValue(stdquestions.get(i).getPoint());
+            if(flag){
+                continue;
+            }
+            for(int i = 0; i < stdquestions.size(); i++){
+                if(stdquestions == null){
+                    continue;
+                }
+                student.createCell(1 + stdquestions.get(i).getQuestionNumber()).setCellValue(stdquestions.get(i).getPoint());
             }
         }
         try {
