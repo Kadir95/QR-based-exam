@@ -17,6 +17,8 @@ import java.util.NoSuchElementException;
 import java.util.Queue;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 
 /**
  *
@@ -33,6 +35,18 @@ public class FileOps {
                 new FileChooser.ExtensionFilter(desc, types)
             );
         return fc.showOpenDialog(stage);
+    }
+    
+    public static File savefilechooser(){
+        Stage stage = new Stage();
+        FileChooser fileChooser = new FileChooser();
+ 
+        //Set extension filter
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Excel File", "*.xlsx");
+        fileChooser.getExtensionFilters().add(extFilter);
+
+        //Show save file dialog
+        return fileChooser.showSaveDialog(stage);
     }
 }
 

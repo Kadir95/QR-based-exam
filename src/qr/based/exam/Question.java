@@ -27,6 +27,9 @@ public class Question implements Serializable{
         this.page = page;
     }
     
+    public float getMaxPoint(){
+        return this.maxpoint;
+    }
     public int getQuestionNumber(){
         return this.question_number;
     }

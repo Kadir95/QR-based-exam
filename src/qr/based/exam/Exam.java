@@ -7,8 +7,11 @@ package qr.based.exam;
 
 import java.awt.image.BufferedImage;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Set;
 import org.apache.pdfbox.pdmodel.PDDocument;
 
@@ -21,6 +24,7 @@ public class Exam implements Serializable{
     private Date date;
     private LinkedHashMap<Student, Sheet> sheets;
     private String type;
+    private ArrayList<Page> errorpages = new ArrayList<>();
     //private PDDocument examdocument;
     
     public Exam(String coursecode, Date date, String type){
@@ -45,6 +49,8 @@ public class Exam implements Serializable{
             
             if(flag && (tempqr = pages[i].getQRcode()) != null){
                 flag = false;
+            } else {
+                errorpages.add(pages[i]);
             }
         }
         
@@ -74,6 +80,27 @@ public class Exam implements Serializable{
         }
     }
     
+    public final ArrayList<Question> quesitonInfo(){
+        Sheet sheet = null;
+        Iterator iterator = this.sheets.entrySet().iterator();
+        while(iterator.hasNext()){
+            Map.Entry enrty = (Map.Entry) iterator.next();
+            if(((Sheet) enrty.getValue()).getStudent() != null){
+                sheet = ((Sheet) enrty.getValue());
+            }
+        }
+        if(sheet != null){
+            ArrayList<Question> quesitons = new ArrayList<>();
+            for(Page page : sheet.getPages()){
+                for(Question q : page.getQuesitons()){
+                    quesitons.add(q);
+                }
+            }
+            return quesitons;
+        }
+        return null;
+    }
+    
     public Set<Student> getStudents(){
         if(!this.sheets.isEmpty()){
             return this.sheets.keySet();
@@ -81,6 +108,9 @@ public class Exam implements Serializable{
         return null;
     }
     
+    public String getType(){
+        return this.type;
+    }
     public String getCourseCode(){
         return this.coursecode;
     }
@@ -89,5 +119,8 @@ public class Exam implements Serializable{
     }
     public LinkedHashMap<Student, Sheet> getSheets(){
         return this.sheets;
+    }
+    public ArrayList<Page> getErrors(){
+        return this.errorpages;
     }
 }

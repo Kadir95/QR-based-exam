@@ -21,6 +21,14 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.PieChart;
+import javafx.scene.chart.XYChart;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tab;
@@ -29,7 +37,9 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import javafx.util.Pair;
 import org.apache.pdfbox.pdmodel.PDDocument;
 
@@ -46,6 +56,10 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     public Tab         errortab;
     @FXML
+    public Tab         statistictab;
+    @FXML
+    public Tab         gradetab;
+    @FXML
     public MenuButton  exammenu;
     @FXML
     public AnchorPane  imagelabelpane;
@@ -54,14 +68,19 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     public DataStorage datastorage;
     @FXML
-    public MenuButton  methodmenu;
-    @FXML
     public TableView<Tablecell> table;
     @FXML
     public TextField   pointenterence;
     @FXML
     public TextArea    reviewfield;
-    
+    @FXML
+    public ComboBox<Student>    errorstudentcombobox;
+    @FXML
+    public VBox         questionadditionbox;
+    @FXML
+    public BarChart<String, Float> poinforeachstudent;
+    @FXML
+    public PieChart     piechart;
     
     private Exam        currentexam = null;
     private Tablecell   currenttablecell = null;
@@ -91,14 +110,9 @@ public class FXMLDocumentController implements Initializable {
     }
     
     @FXML
-    private void questionbyquestionaction(ActionEvent event){
-        this.method = "QbQ";
-        methodmenu.setText("Question by Quesiton");
-    }
-    @FXML
-    private void studentbystudentaction(ActionEvent event){
-        this.method = "SbS";
-        methodmenu.setText("Student by Student");
+    public void onReviewSaveButton(ActionEvent event){
+        quickSaveReview();
+        quickSavePoint();
     }
     
     @FXML
@@ -106,6 +120,18 @@ public class FXMLDocumentController implements Initializable {
         this.writeData();
         System.out.println("Data is saved");
     }  
+    
+    @FXML
+    public void onExportButtonAciton(ActionEvent event){
+        if(currentexam == null){
+            return;
+        }
+        File file = FileOps.savefilechooser();
+        if(file != null){
+            DocOps.excelExport(currentexam, file);
+        }
+        
+    }
     
     public void writeData(){
         FileRead<DataStorage> fr = new FileRead<>();
@@ -118,7 +144,7 @@ public class FXMLDocumentController implements Initializable {
             FileRead<DataStorage> fr = new FileRead<>();
 
             File file = FileRead.findFile(new File("./"), "data.bin");
-
+            
             if(file != null){
                 datastorage = fr.readBinaryFile(file);
                 System.out.println("Data is taken!");
@@ -149,6 +175,12 @@ public class FXMLDocumentController implements Initializable {
                     String[] arr = text.split("\\+");
                     Pair<String, Date> pair = new Pair<>(arr[0], new Date(Long.valueOf(arr[1])));
                     currentexam = datastorage.exams.get(pair);
+                    if(!currentexam.getErrors().isEmpty()){
+                        errortab.setDisable(false);
+                        statistictab.setDisable(true);
+                        gradetab.setDisable(true);
+                        errorhandle();
+                    }
                     exammenu.setText(currentexam.getCourseCode());
                     refreshTable();
                 });
@@ -176,18 +208,63 @@ public class FXMLDocumentController implements Initializable {
         }
         table.refresh();
     }
+    public void errorhandle(){
+        Iterator<Student> iter = currentexam.getStudents().iterator();
+        while(iter.hasNext()){
+            errorstudentcombobox.getItems().add(iter.next());
+        }
+        
+        
+    }
+    @FXML
+    public void addquestionbutton(ActionEvent event){
+        ButtonBar newbuttonbar = new ButtonBar();
+        Button addimagebutton = new Button("Add Image");
+        Button save = new Button("Save");
+        TextField pagenumber = new TextField();
+        pagenumber.setPromptText("Page No");
+        TextField questionnumber = new TextField();
+        questionnumber.setPromptText("Quesiton No");
+        newbuttonbar.getButtons().addAll(pagenumber, questionnumber, addimagebutton, save);
+        questionadditionbox.getChildren().add(newbuttonbar);
+    }
     
     @FXML
     public void nextButtonAction(ActionEvent event){
+        onReviewSaveButton(null);
         
+        int currentindex = table.getSelectionModel().getSelectedIndex();
+        int tablemax = table.getItems().size();
+        currentindex++;
+        if(currentindex < tablemax){
+            currentindex = currentindex % tablemax;
+        }
+        table.getSelectionModel().select(currentindex);
+        
+        Tablecell selected = table.getSelectionModel().getSelectedItem();
+        currenttablecell = selected;
+        initQuestionReview(selected);
     }
     
     @FXML
     public void backButtonAction(ActionEvent event){
+        onReviewSaveButton(null);
         
+        int currentindex = table.getSelectionModel().getSelectedIndex();
+        int tablemax = table.getItems().size();
+        currentindex--;
+        if(currentindex < 0){
+            currentindex = 0;
+        }
+        table.getSelectionModel().select(currentindex);
+        
+        Tablecell selected = table.getSelectionModel().getSelectedItem();
+        currenttablecell = selected;
+        initQuestionReview(selected);
     }
     
     public void onTableClick(){
+        onReviewSaveButton(null);
         Tablecell selected = table.getSelectionModel().getSelectedItem();
         currenttablecell = selected;
         initQuestionReview(selected);
@@ -199,12 +276,72 @@ public class FXMLDocumentController implements Initializable {
         if(selected.question.getReview() != null){
             reviewfield.setText(selected.question.getReview());
         }
-        pointenterence.setText(String.valueOf(selected.question.getPoint()));
+        pointenterence.setText("");
+        if(selected.question.getPoint() != 0){
+            pointenterence.setText(String.valueOf(selected.question.getPoint()));
+        } else {
+            pointenterence.setPromptText("Between 0 and " + selected.question.getMaxPoint());
+        }
+        
+    }
+    
+    public void quickSavePoint(){
+        if(currenttablecell != null){
+            try {
+                float point = Float.valueOf(pointenterence.getText());
+                if(point >= 0 && point <= currenttablecell.question.getMaxPoint()){
+                    currenttablecell.question.setPoint(point);
+                } else {
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "The point isn't in interval\nIt must be between 0 and " + currenttablecell.question.getMaxPoint() + ".", ButtonType.YES);
+                    alert.showAndWait();
+
+                    if (alert.getResult() == ButtonType.YES) {
+                        alert.close();
+                    }
+                }
+            } catch (NumberFormatException e){
+                
+            }
+        }
     }
     
     public void quickSaveReview(){
         if(currenttablecell != null){
             currenttablecell.question.setReview(reviewfield.getText());
+        }
+    }
+    
+    public void statistic(){
+        if(currentexam != null){
+            float[] pointperquesiton = new float[currentexam.quesitonInfo().size()];
+            poinforeachstudent.getData().clear();
+            piechart.getData().clear();
+            Iterator iter = currentexam.getStudents().iterator();
+            while(iter.hasNext()){
+                Student std = (Student) iter.next();
+                Sheet sheet = currentexam.getSheets().get(std);
+                ArrayList<Page> pages = sheet.getPages();
+                float totalpoint  = 0;
+                int i = 0;
+                for(Page page : pages){
+                    for(Question quest : page.getQuesitons()){
+                        pointperquesiton[i] += quest.getPoint()/quest.getMaxPoint();
+                        totalpoint += quest.getPoint();
+                        i++;
+                    }
+                }
+                XYChart.Series serie = new XYChart.Series();
+                serie.getData().add(new XYChart.Data(std.getPair().getKey(), totalpoint));
+                poinforeachstudent.getData().add(serie);
+                
+                
+                
+            }
+            PieChart.Data[] dataset = new PieChart.Data[pointperquesiton.length];
+            for(int j = 0; j < pointperquesiton.length; j++){
+                dataset[j] = new PieChart.Data("Queston " + (j + 1), pointperquesiton[j]);
+            }
+            piechart.getData().addAll(dataset);
         }
     }
     
@@ -225,12 +362,21 @@ public class FXMLDocumentController implements Initializable {
                 }
             }
         });
+        pointenterence.setOnKeyPressed((event) -> {
+            if(event.getCode() == KeyCode.ENTER){
+                quickSavePoint();
+            }
+        });
         
         reviewfield.setOnKeyReleased((event) -> {
             quickSaveReview();
         });
         
-        errortab.setDisable(true);
+        statistictab.setOnSelectionChanged((event) -> {
+            statistic();
+        });
+        
+        errortab.setDisable(false);
         datastorage = new DataStorage();
         this.readData();
         refreshExamMenu();
